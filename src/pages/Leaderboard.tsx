@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Flame, Trophy, Crown, Medal, Award } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { dummyReaders, dummyQuizResponses, dummyProgress } from '@/lib/dummy';
 import type { Reader, QuizResponse, ReadingProgress, LeaderboardEntry } from '@/lib/types';
 import { Avatar, Skeleton } from '@/components/ui';
 
@@ -10,15 +10,12 @@ export default function Leaderboard() {
 
   useEffect(() => {
     async function load() {
-      const [{ data: readers }, { data: responses }, { data: progress }] = await Promise.all([
-        supabase.from('readers').select('*'),
-        supabase.from('quiz_responses').select('*'),
-        supabase.from('reading_progress').select('*'),
-      ]);
+      // Simulate network delay
+      await new Promise(r => setTimeout(r, 500));
 
-      const allReaders = (readers as Reader[]) || [];
-      const allResponses = (responses as QuizResponse[]) || [];
-      const allProgress = (progress as ReadingProgress[]) || [];
+      const allReaders = dummyReaders;
+      const allResponses = dummyQuizResponses;
+      const allProgress = dummyProgress;
 
       const progressByReader = new Map<string, number>();
       allProgress.forEach((p) => {

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Flame, CheckCircle2, ChevronDown, ChevronRight, Calendar, TrendingUp, AlertTriangle } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { dummyReaders, dummySchedule, dummyProgress } from '@/lib/dummy';
 import type { Reader, ReadingProgress, ReadingSchedule } from '@/lib/types';
 import { Avatar, ProgressBar } from '@/components/ui';
 
@@ -20,15 +20,12 @@ export default function Progress() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [{ data: readers }, { data: scheduleData }, { data: progressData }] = await Promise.all([
-      supabase.from('readers').select('*').order('name', { ascending: true }),
-      supabase.from('reading_schedule').select('*').order('day_number', { ascending: true }),
-      supabase.from('reading_progress').select('*'),
-    ]);
-
-    const allReaders = (readers as Reader[]) || [];
-    const allSchedule = (scheduleData as ReadingSchedule[]) || [];
-    const allProgress = (progressData as ReadingProgress[]) || [];
+    // Simulate network delay
+    await new Promise(r => setTimeout(r, 500));
+    
+    const allReaders = dummyReaders;
+    const allSchedule = dummySchedule;
+    const allProgress = dummyProgress;
 
     const scheduleByDay = new Map(allSchedule.map((s) => [s.id, s.day_number]));
     const progressByReader = new Map<string, ReadingProgress[]>();

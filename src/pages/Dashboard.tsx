@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Users, TrendingUp, HelpCircle, Flame, CheckCircle2, AlertTriangle, BookOpen } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { dummyReaders, getDummyQuestions } from '@/lib/dummy';
 import type { Reader, QuizQuestion } from '@/lib/types';
 import { Avatar } from '@/components/ui';
 
@@ -21,8 +21,10 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (tab: 'dashboar
 
   useEffect(() => {
     async function load() {
-      const { data: readers } = await supabase.from('readers').select('*');
-      const { data: questions } = await supabase.from('quiz_questions').select('*');
+      // Simulate network delay
+      await new Promise(r => setTimeout(r, 500));
+      const readers = dummyReaders;
+      const questions = getDummyQuestions();
 
       const today = new Date();
       const startDate = new Date('2026-09-21');
@@ -42,7 +44,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (tab: 'dashboar
       setStats({
         totalReaders: allReaders.length,
         activeReaders: active.length,
-        totalQuestions: (questions as QuizQuestion[])?.length || 0,
+        totalQuestions: questions.length,
         onTrack,
         fallingBehind,
         avgStreak,

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Search, Phone, X, Flame, MoreVertical, Trash2, Edit2, Users } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { dummyReaders } from '@/lib/dummy';
 import type { Reader, ReaderStatus } from '@/lib/types';
 import { Avatar } from '@/components/ui';
 
@@ -14,8 +14,9 @@ export default function Readers() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from('readers').select('*').order('name', { ascending: true });
-    setReaders((data as Reader[]) || []);
+    await new Promise(r => setTimeout(r, 500));
+    const data = [...dummyReaders].sort((a, b) => a.name.localeCompare(b.name));
+    setReaders(data);
     setLoading(false);
   }, []);
 
@@ -37,15 +38,15 @@ export default function Readers() {
   };
 
   async function deleteReader(id: string) {
-    await supabase.from('readers').delete().eq('id', id);
+    console.log('Dummy delete reader', id);
+    setReaders(prev => prev.filter(r => r.id !== id));
     setMenuFor(null);
-    load();
   }
 
   async function updateStatus(id: string, status: ReaderStatus) {
-    await supabase.from('readers').update({ status }).eq('id', id);
+    console.log('Dummy update status', id, status);
+    setReaders(prev => prev.map(r => r.id === id ? { ...r, status } : r));
     setMenuFor(null);
-    load();
   }
 
   return (
@@ -179,11 +180,8 @@ function ReaderForm({ reader, onClose, onSaved }: { reader: Reader; onClose: () 
   async function save() {
     if (!name.trim()) return;
     setSaving(true);
-    await supabase.from('readers').update({
-      name: name.trim(),
-      phone: phone.trim() || null,
-      telegram_id: telegramId.trim() || null,
-    }).eq('id', reader.id);
+    await new Promise(r => setTimeout(r, 500));
+    console.log('Dummy update reader', reader.id, { name: name.trim(), phone: phone.trim() || null, telegram_id: telegramId.trim() || null });
     setSaving(false);
     onSaved();
     onClose();
